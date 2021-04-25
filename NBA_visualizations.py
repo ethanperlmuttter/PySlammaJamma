@@ -9,3 +9,4 @@ import csv
 import sqlite3
 import json 
 
+def main():
