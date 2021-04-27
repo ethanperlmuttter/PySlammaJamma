@@ -1,26 +1,15 @@
 #By Chris Hudson and Ethan Perlmutter
+from gathering_NBA_data import setUpDatabase
+from gathering_NBA_data import setUp2020Table
+from gathering_NBA_data import create_table_2020
 
-import 
-import numpy as np 
-import sqlite3 as sq
+#gathers first 40 pages of 2020 season (pre-COVID)
+def repeat_gather():
+    cur, conn = setUpDatabase()
+    create_table_2020(cur, conn)
+    for i in range(40):
+        setUp2020Table(cur, conn)
 
-
-def getScores():
-    pass
-
-
-def makeTable():
-    pass
-
-def graph1():
-    pass
+repeat_gather()
 
 
-def graph2():
-    pass
-
-
-def main():
-    pass
-
-main()
