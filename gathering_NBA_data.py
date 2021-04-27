@@ -24,25 +24,27 @@ def create_table_2021(cur, conn):
 
 
 def setUpTeamsTable(cur, conn):
-    teams_names = []
-
-    url = "https://www.basketball-reference.com/leagues/NBA_2021_games.html"
-
-    r = requests.get(url)
-
-    soup = BeautifulSoup(r.text, 'html.parser')
-
-    
-    table = soup.find('table')
-
-    trs = table.find_all('tr')[2:]
+    months = ['december', 'january', 'february', 'march']
     i = 0
-    for tr in trs:
-        hs = tr.find('td',{'data-stat':'visitor_pts'}).text
-        vs = tr.find('td',{'data-stat':'home_pts'}).text
-        atten  = tr.find('td', {'data-stat':'attendance'}).text
-        cur.execute("INSERT INTO Scores_2021 (game_id, Vistor_Score, Home_Score, Attendance) VALUES (?,?,?,?)", (i, int(vs), int(hs), int(atten.replace(',', ''))))
-        i+=1
+    for month in months:
+        url = f"https://www.basketball-reference.com/leagues/NBA_2021_games-{month}.html"
+
+        r = requests.get(url)
+
+        soup = BeautifulSoup(r.text, 'html.parser')
+
+        
+        table = soup.find('table')
+
+        trs = table.find_all('tr')[2:]
+        for tr in trs:
+            hs = tr.find('td',{'data-stat':'visitor_pts'}).text
+            vs = tr.find('td',{'data-stat':'home_pts'}).text
+            atten  = tr.find('td', {'data-stat':'attendance'}).text
+            if atten=='':
+                atten = '0'
+            cur.execute("INSERT INTO Scores_2021 (game_id, Vistor_Score, Home_Score, Attendance) VALUES (?,?,?,?)", (i, int(vs), int(hs), int(atten.replace(',', '')) ) )
+            i+=1
     conn.commit()
 
     '''
@@ -66,5 +68,5 @@ def setUpTeamsTable(cur, conn):
 
 
 cur, conn = setUpDatabase()
-
+create_table_2021(cur, conn)
 setUpTeamsTable(cur, conn)

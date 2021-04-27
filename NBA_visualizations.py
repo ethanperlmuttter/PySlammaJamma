@@ -10,3 +10,8 @@ import sqlite3
 import json 
 
 def main():
+     """Returns nothing and takes no inputs. This function selects data from the database in order to create visualizations (two dot plots, a scatterplot, and two bar charts.) """
+    path = os.path.dirname(os.path.abspath(__file__)
+    conn = sqlite3.connect(path + '/NBA.db')
+    cur = conn.cursor()
+

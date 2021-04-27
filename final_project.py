@@ -1,5 +1,6 @@
 #By Chris Hudson and Ethan Perlmutter
 
+import 
 import numpy as np 
 import sqlite3 as sq
 
