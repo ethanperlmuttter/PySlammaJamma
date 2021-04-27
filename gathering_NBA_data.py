@@ -19,8 +19,8 @@ def create_table_2021(cur, conn):
     conn.commit()
 #takes in cur and conn, produces empty table for 2020 scores, returns nothing
 def create_table_2020(cur,conn):
-    cur.execute("DROP TABLE IF EXISTS Scores_2020")
-    cur.execute("CREATE TABLE Scores_2020 (game_id INTEGER PRIMARY KEY, Visitor_id INTEGER, Vistor_Score INTEGER, Home_id INTEGER, Home_Score INTEGER)")
+
+    cur.execute("CREATE TABLE IF NOT EXISTS Scores_2020 (game_id INTEGER PRIMARY KEY, Visitor_id INTEGER, Vistor_Score INTEGER, Home_id INTEGER, Home_Score INTEGER, Page INTEGER)")
     conn.commit()
 
 def create_team_keys_table(cur, conn):
@@ -62,7 +62,16 @@ def setUp2021Table(cur, conn):
 
 #accepts cur and conn, populates table from balldontlie, returns nothing
 def setUp2020Table(cur, conn):
-    r = requests.get("https://www.balldontlie.io/api/v1/games?seasons[]=2020")
+    cur.execute("SELECT MAX(Page) FROM Scores_2020")
+    
+    n = cur.fetchone()[0]
+    if(not n):
+        n = 0
+    page = n+1
+
+
+    #each page contains exactly 25 game results
+    r = requests.get(f"https://www.balldontlie.io/api/v1/games?seasons[]=2019&page={page}")
     games = json.loads(r.text)
 
 
@@ -74,7 +83,7 @@ def setUp2020Table(cur, conn):
         vs = game.get('visitor_team_score', 0)
         hid = game.get('home_team',None).get('id',0)
         vid = game.get('visitor_team',None).get('id',0)
-        cur.execute("INSERT INTO Scores_2020 (game_id , Visitor_id, Vistor_Score, Home_id, Home_Score) VALUES (?,?,?,?,?)", (id_, vid, vs, hid, hs))
+        cur.execute("INSERT INTO Scores_2020 (game_id , Visitor_id, Vistor_Score, Home_id, Home_Score, Page) VALUES (?,?,?,?,?,?)", (id_, vid, vs, hid, hs, page))
 
     conn.commit()
 
@@ -110,11 +119,14 @@ def setUpTeamsTable(cur, conn):
 
 
 
+def main():
+    cur, conn = setUpDatabase()
+    create_team_keys_table(cur,conn)
+    create_table_2020(cur, conn)
+    setUp2020Table(cur, conn)
+    create_table_2021(cur, conn)
+    setUp2021Table(cur, conn)
+    setUpTeamsTable(cur, conn)
 
-cur, conn = setUpDatabase()
-create_team_keys_table(cur,conn)
-create_table_2020(cur, conn)
-setUp2020Table(cur, conn)
-create_table_2021(cur, conn)
-setUp2021Table(cur, conn)
-setUpTeamsTable(cur, conn)
+if __name__ == "__main__":
+    main()
