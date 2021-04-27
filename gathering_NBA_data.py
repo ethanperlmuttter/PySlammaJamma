@@ -5,17 +5,27 @@ import json
 import os
 from nba_api.stats.static import teams 
 
-
+#creates the database, returns cur and conn paramters
 def setUpDatabase():
     path = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(path+'/'+"NBA_SCORES")
     cur = conn.cursor()
     return cur, conn
 
-
+#takes in cur and conn, produces empty table for 2021 scores, returns nothing
 def create_table_2021(cur, conn):
     cur.execute("DROP TABLE IF EXISTS Scores_2021")
     cur.execute("CREATE TABLE Scores_2021 (game_id INTEGER PRIMARY KEY, Vistor_Score INTEGER, Home_Score INTEGER, Attendance INTEGER)")
+    conn.commit()
+#takes in cur and conn, produces empty table for 2020 scores, returns nothing
+def create_table_2020(cur,conn):
+    cur.execute("DROP TABLE IF EXISTS Scores_2020")
+    cur.execute("CREATE TABLE Scores_2020 (game_id INTEGER PRIMARY KEY, Visitor_id INTEGER, Vistor_Score INTEGER, Home_id INTEGER, Home_Score INTEGER)")
+    conn.commit()
+
+def create_team_keys_table(cur, conn):
+    cur.execute("DROP TABLE IF EXISTS Team_keys")
+    cur.execute("CREATE TABLE Team_keys (team_id INTEGER PRIMARY KEY, team_abrv TEXT)")
     conn.commit()
 
 
@@ -23,7 +33,9 @@ def create_table_2021(cur, conn):
 
 
 
-def setUpTeamsTable(cur, conn):
+
+#accepts cur and conn, populates table from beautiful soup/basketball reference, returns nothing
+def setUp2021Table(cur, conn):
     months = ['december', 'january', 'february', 'march']
     i = 0
     for month in months:
@@ -47,14 +59,46 @@ def setUpTeamsTable(cur, conn):
             i+=1
     conn.commit()
 
-    '''
-  
-    cur.execute("DROP TABLE IF EXISTS Teams")
-    cur.execute("CREATE TABLE Categories (id INTEGER PRIMARY KEY, name TEXT)")
-    for i in range(len(team_list)):
-        cur.execute("INSERT INTO Teams (id,name) VALUES (?,?)",(i,team_list[i]))
+
+#accepts cur and conn, populates table from balldontlie, returns nothing
+def setUp2020Table(cur, conn):
+    r = requests.get("https://www.balldontlie.io/api/v1/games?seasons[]=2020")
+    games = json.loads(r.text)
+
+
+    for game in games['data']:
+
+
+        id_ = game.get('id', 0)
+        hs = game.get('home_team_score', 0)
+        vs = game.get('visitor_team_score', 0)
+        hid = game.get('home_team',None).get('id',0)
+        vid = game.get('visitor_team',None).get('id',0)
+        cur.execute("INSERT INTO Scores_2020 (game_id , Visitor_id, Vistor_Score, Home_id, Home_Score) VALUES (?,?,?,?,?)", (id_, vid, vs, hid, hs))
+
     conn.commit()
-    '''
+
+#accepts cur and conn, populates table from balldontlie to match team keys to names, returns nothing
+def setUpTeamsTable(cur, conn):
+    r = requests.get("https://www.balldontlie.io/api/v1/teams")
+    teams = json.loads(r.text)
+
+
+    for team in teams['data']:
+
+
+        id_ = team.get('id', 0)
+        abrv = team.get('abbreviation', None)
+        cur.execute("INSERT INTO Team_keys (team_id, team_abrv) VALUES (?,?)", (id_, abrv))
+
+    conn.commit()
+
+
+    
+ 
+
+
+   
 
 
 
@@ -68,5 +112,9 @@ def setUpTeamsTable(cur, conn):
 
 
 cur, conn = setUpDatabase()
+create_team_keys_table(cur,conn)
+create_table_2020(cur, conn)
+setUp2020Table(cur, conn)
 create_table_2021(cur, conn)
+setUp2021Table(cur, conn)
 setUpTeamsTable(cur, conn)
