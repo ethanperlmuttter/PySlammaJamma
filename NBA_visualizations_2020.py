@@ -10,8 +10,11 @@ import sqlite3
 import json
 
 #API data from https://www.balldontlie.io/api/v1/games?seasons[]=2019&page={page}
+#Necessary file imports for Plotly file creation
 
 #Grouped Bar Chart for 2020 Home court PPG averages for all NBA teams
+#Grouped Bar Chart Plotly creation and line by line bar development for each NBA team, pulling
+#home court PPG averages from API gather
 
 teams = ["NBA Team"]
 
@@ -47,7 +50,7 @@ fig = go.Figure(data=[
     go.Bar(name='Utah Jazz', x=teams, y=[111.48571428571428], marker_color = 'rgb(0,71,27)'),
     go.Bar(name='Washington Wizards', x=teams, y=[114.0], marker_color = 'rgb(0,43,92)'),
 ])
-# To alter bar presentation
+# To alter bar presentation/add in title text and external features
 fig.update_layout(barmode='group')
 fig.update_layout(title_text='NBA 2020 Pre-COVID-19 Home Team PPG Averages')
 fig.show()
@@ -61,25 +64,4 @@ fig.show()
 #df = df.groupby(['month', 'team_name'], as_index=False)[['Home_PPG']].avg()
 #print (df[:30])
 
-#fig = go.Figure(data=go.Bar(y=[2, 3, 1]))
-#fig.write_html('first_figure.html', auto_open=True) 
-
-#def main():
-    #"""Returns nothing and takes no inputs. This function selects data from the database in order to create visualizations (two bar charts grouped through plotly) """
-   # path = os.path.dirname(os.path.abspath(__file__))
-    #conn = sqlite3.connect(path+'/NBA_SCORES')
-    #cur = conn.cursor()
-    #nba_home_chart = px.bar(
-        #data_frame = df,
-        #x = "Team",
-       # y = "Home_PPG",
-        #color = ("red", "light blue"),
-        #opacity = 0.92,
-       # orientation = "v",
-       # barmode = "group"
-    #)
-
-
-#if __name__ == "__main__":
-    #main()
 
