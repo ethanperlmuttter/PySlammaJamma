@@ -10,8 +10,10 @@ import sqlite3
 import json
 
 #API data from https://www.basketball-reference.com/leagues/NBA_2021_games-{month}.html
-
+#Necessary file imports for Plotly file creation
 #Grouped Bar Chart for 2021 Home court PPG averages for all NBA teams
+#Grouped Bar Chart Plotly creation and line by line bar development for each NBA team, pulling
+#home court PPG averages from API gather
 
 teams = ["NBA Team"]
 
@@ -47,7 +49,7 @@ fig = go.Figure(data=[
     go.Bar(name='Utah Jazz', x=teams, y=[117.933343435], marker_color = 'rgb(0,71,27)'),
     go.Bar(name='Washington Wizards', x=teams, y=[118.124522], marker_color = 'rgb(0,43,92)'),
 ])
-# To alter bar presentation
+# To alter bar presentation/add in external features and title text to clarify which year is depicted
 fig.update_layout(barmode='group')
 fig.update_layout(title_text='NBA 2021 Pre-COVID-19 Home Team PPG Averages')
 fig.show()
