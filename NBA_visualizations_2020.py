@@ -9,8 +9,7 @@ import csv
 import sqlite3
 import json
 
-# data from https://www.balldontlie.io/api/v1/games?seasons[]=2019&page={page} and 
-# https://www.basketball-reference.com/leagues/NBA_2021_games-{month}.html
+#API data from https://www.balldontlie.io/api/v1/games?seasons[]=2019&page={page}
 
 #Grouped Bar Chart for 2020 Home court PPG averages for all NBA teams
 
@@ -35,7 +34,7 @@ fig = go.Figure(data=[
     go.Bar(name='Miami Heat', x=teams, y=[115.75], marker_color = 'rgb(152,0,46)'),
     go.Bar(name='Milwaukee Bucks', x=teams, y=[120.97222222222223], marker_color = 'rgb(0,71,27)'),
     go.Bar(name='Minnesota Timberwolves', x=teams, y=[110.125], marker_color = 'rgb(12,35,64)'),
-    go.Bar(name='New Orleans Pelicans', x=teams, y=[117.58333333333333], marker_color = 'rgb(0,22,65)'),
+    go.Bar(name='New Orleans Pelicans', x=teams, y=[117.58333333333333], marker_color = 'rgb(180,151,90)'),
     go.Bar(name='New York Knicks', x=teams, y=[105.39393939393939], marker_color = 'rgb(0,107,182)'),
     go.Bar(name='Oklahoma City Thunder', x=teams, y=[113.16666666666667], marker_color = 'rgb(239,59,36)'),
     go.Bar(name='Orlando Magic', x=teams, y=[106.05714285714286], marker_color = 'rgb(0,125,197)'),
